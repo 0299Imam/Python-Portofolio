@@ -75,7 +75,69 @@ Key Findings and Recommendations:
   
   [View Project](https://github.com/0299Imam/Python-Portofolio/blob/main/Impact_of_Screen_Time_on_Mental_Health.ipynb)
 
+6. Customer Purchase Behavior Analysis
+   
+**🎯 Business Questions**
 
+    1. Which product categories have the most loyal and high-value customers?
+    2. What are the customer behavioral patterns based on purchase frequency, spending value, and recency?
+    3. What strategies can be implemented to improve customer retention and marketing efficiency?
+
+*🔍 Analytical Method*
+
+This project uses RFM (Recency, Frequency, Monetary) Analysis.
+
+- Recency (R): How recently a customer made their last purchase.
+- Frequency (F): How often a customer makes purchases.
+- Monetary (M): How much revenue a customer generates.
+Each dimension is scored from 1–4, and combined into an RFM Segment (e.g., 444) to identify customer behavior profiles.
+
+*📊 Key Insights*
+
+- Sneakers – “Champion” Segment (RFM 444)
+Customers who purchased Sneakers recently, frequently, and with the highest monetary value ($81,586.89).
+→ These are core revenue drivers and the most loyal customers.
+
+- Hoodie – “Loyal but Declining” Segment (RFM 433)
+Still active, but showing a slight drop in purchase frequency and spending compared to Sneakers.
+→ Needs a re-engagement strategy such as bundle offers or limited editions.
+
+- Cap & T-shirt – “At Risk / Lost” Segment (RFM 111–211)
+Low frequency, long time since last purchase, and low spending value.
+→ Requires price repositioning, refreshed designs, or comeback campaigns.
+
+**💡 Recommendations**
+
+- Maintain & Grow Premium Segments (Sneakers, Hoodie)
+
+- Implement loyalty programs and exclusive offers for active customers.
+Apply cross-selling strategies (e.g., recommend socks or hoodies with Sneakers).
+
+- Reactivate Dormant Customers (Cap, T-shirt)
+
+- Use personalized email campaigns or “welcome back” discounts.
+Re-evaluate product designs and positioning based on customer feedback.
+
+- Optimize Marketing & Inventory Allocation
+
+- Focus marketing budgets and stock management on high-RFM products.
+Conduct customer surveys to uncover reasons behind low-performing categories.
+
+**🧠 Conclusion**
+
+RFM analysis reveals that customer engagement varies significantly across product categories.
+- Sneakers & Hoodie: Core revenue contributors with high loyalty.
+- Joggers: Moderate segment with potential for growth.
+- Cap & T-shirt: Weak-performing segments that require revitalization.
+
+By applying data-driven RFM segmentation, the company can improve retention, maximize Customer Lifetime Value (CLV), and optimize marketing efficiency.
+
+**🧰 Tools Used**
+- Python (Pandas, Matplotlib, Seaborn): Data cleaning, RFM scoring, and visualization.
+- Looker Studio / Power BI: Interactive dashboards for RFM results.
+- GitHub: Repository for documentation and version control.
+
+  [View Project](https://github.com/0299Imam/Python-Portofolio/blob/main/Customer_Purchase_Behavior_Analysis.ipynb)
 
 Skills Demonstrated
 
