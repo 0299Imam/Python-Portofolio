@@ -150,6 +150,151 @@ Skills Demonstrated
 - Feature Engineering
 - Use of data science libraries (Pandas, Scikit-learn, Keras)
 
+
+# Analisis Program Makan Bergizi Gratis (MBG): Efisiensi Gizi, Sisa Makanan, dan Segmentasi Dapur SPPG
+
+Analisis data eksploratif (EDA) dan segmentasi *machine learning* terhadap data distribusi Program Makan Bergizi Gratis (MBG) di Indonesia. Proyek ini mengevaluasi **efisiensi biaya gizi**, **risiko pembusukan**, **sisa makanan (*plate waste*)**, dan **serapan petani lokal** pada dapur SPPG di berbagai klaster wilayah, lalu menghasilkan rekomendasi operasional berbasis data.
+
+> **Notebook:** [`analisa_makan_bergizi_gratis.ipynb`](analisa_makan_bergizi_gratis.ipynb)
+
+---
+
+## Pertanyaan Analisis
+
+1. Sumber protein mana yang paling hemat biaya per gram protein?
+2. Bagaimana kinerja operasional (sisa makanan, risiko pembusukan, serapan petani lokal, waktu transit) berbeda antar klaster wilayah?
+3. Apakah waktu transit berhubungan dengan risiko pembusukan?
+4. Apa pemicu utama sisa makanan?
+5. Dapat dikelompokkan menjadi berapa tipe dapur SPPG berdasarkan karakteristik operasionalnya?
+
+## Dataset
+
+| Item | Keterangan |
+|---|---|
+| File | `indonesia_mbg_nationwide_enriched_2026.csv` |
+| Ukuran | 9.690 baris × 26 kolom |
+| Sumber | _[isi: sumber dan lisensi dataset]_ |
+
+Dataset **tidak disertakan** di repositori ini. Letakkan file CSV di folder yang sama dengan notebook sebelum menjalankannya.
+
+**Kolom utama yang digunakan:**
+
+| Kolom | Deskripsi |
+|---|---|
+| `protein_type` | Jenis sumber protein pada menu |
+| `raw_ingredient_cost_per_portion_idr` | Biaya bahan baku per porsi (Rp) |
+| `estimated_protein_grams` | Estimasi protein per porsi (gram) |
+| `cost_to_nutrition_ratio` | Rasio biaya per gram protein (Rp/g) |
+| `regional_cluster` | Klaster wilayah (Jawa Metropolitan, Luar Jawa Urban, Daerah Pedesaan & Kepulauan, Wilayah 3T Perbatasan & Pedalaman) |
+| `plate_waste_percentage` | Persentase sisa makanan |
+| `spoilage_risk_index` | Indeks risiko pembusukan (skala 0–10) |
+| `local_farmer_sourcing_pct` | Persentase pasokan dari petani lokal |
+| `transit_time_minutes` | Waktu transit distribusi (menit) |
+| `delivery_distance_km` | Jarak pengantaran (km) |
+| `kitchen_daily_capacity_portions` | Kapasitas dapur per hari (porsi) |
+| `bgn_program_compliance_tier` | Tingkat kepatuhan terhadap program BGN |
+| `primary_food_waste_driver` | Pemicu utama sisa makanan |
+
+## Metodologi
+
+1. **Pemuatan data:** membaca CSV dengan `csv.reader` dan penanganan baris yang tidak sesuai panjang header (karena tanda kutip yang tidak tertutup).
+2. **Pembersihan:** konversi kolom numerik dengan `pd.to_numeric(errors='coerce')`, lalu `dropna` pada fitur klasterisasi.
+3. **Agregasi:** ringkasan per `protein_type` dan per `regional_cluster` menggunakan `groupby`.
+4. **Visualisasi:** dashboard 4 panel (bar plot, box plot, scatter plot, count plot) dengan Matplotlib dan Seaborn.
+5. **Segmentasi:** K-Means (k = 3, `random_state=42`) pada enam fitur operasional yang distandarisasi dengan `StandardScaler`, lalu *profiling* tiap klaster.
+
+## Temuan Utama
+
+### 1. Efisiensi biaya protein
+
+| Jenis protein | Biaya per gram protein (Rp) |
+|---|---:|
+| Daging Sapi / Kerbau | 498,84 |
+| Daging Ayam Broiler | 556,54 |
+| Ikan Kembung / Lele / Bandeng | 579,05 |
+| Telur Ayam Boiler | 698,17 |
+| Susu Pasteurisasi Segar | 809,40 |
+
+Daging sapi/kerbau paling efisien per gram protein, sekitar **38% lebih murah** dibanding susu pasteurisasi segar.
+
+### 2. Kinerja per klaster wilayah
+
+| Klaster wilayah | Sisa makanan (%) | Risiko pembusukan | Petani lokal (%) | Transit (menit) |
+|---|---:|---:|---:|---:|
+| Daerah Pedesaan & Kepulauan | 14,11 | 3,31 | 82,53 | 31,8 |
+| Jawa Metropolitan | 13,38 | 1,56 | 57,50 | 15,0 |
+| Luar Jawa Urban | 13,47 | 1,47 | 70,73 | 16,5 |
+| Wilayah 3T Perbatasan & Pedalaman | 14,97 | 5,23 | 82,28 | 49,5 |
+
+Wilayah 3T memiliki sisa makanan, risiko pembusukan, dan waktu transit tertinggi. Jawa Metropolitan punya serapan petani lokal terendah.
+
+### 3. Segmentasi dapur SPPG (K-Means, k = 3)
+
+| Segmen | Kapasitas (porsi) | Jarak (km) | Transit (menit) | Sisa makanan (%) | Petani lokal (%) | Risiko pembusukan |
+|---|---:|---:|---:|---:|---:|---:|
+| **High-Risk Remote Kitchens** | 1.055 | 18,60 | 71,31 | 17,20 | 82,07 | 7,94 |
+| **Large-Scale Urban Central Kitchens** | 2.507 | 4,29 | 14,58 | 13,40 | 58,14 | 1,49 |
+| **Rural & Semi-Urban Efficient Kitchens** | 1.238 | 6,07 | 22,69 | 13,31 | 81,77 | 2,17 |
+
+> Nomor label klaster (0/1/2) dapat berubah antar eksekusi, jadi segmen diidentifikasi lewat profilnya.
+
+### 4. Pemicu sisa makanan
+
+Perilaku konsumsi jajanan sebelum makan siang (*Prior-Snack-Consumption*) teridentifikasi sebagai pemicu utama sisa makanan.
+
+## Rekomendasi
+
+- **Dapur jarak jauh (risiko tinggi):** investasi armada berpendingin/terisolasi termal dan batasi radius distribusi (usulan maksimal 15 km).
+- **Dapur perkotaan skala besar:** perkuat kemitraan dengan pemasok dan petani lokal untuk menaikkan serapan lokal dan dampak ekonomi daerah.
+- **Dapur perdesaan/semi-urban efisien:** jadikan *benchmark* operasional untuk replikasi di wilayah penyangga.
+- **Anggaran terbatas:** prioritaskan menu berbasis daging sapi/ayam broiler untuk efisiensi gizi per rupiah.
+- **Sisa makanan:** majukan jadwal pembagian makanan (mis. 09.30 WIB) dan batasi penjualan jajanan di kantin sebelum jam makan.
+
+## Cara Menjalankan
+
+```bash
+# 1. Clone repositori
+git clone <url-repositori-anda>
+cd <nama-folder>
+
+# 2. (Opsional) buat virtual environment
+python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+
+# 3. Install dependensi
+pip install pandas matplotlib seaborn scikit-learn jupyter
+
+# 4. Letakkan dataset di folder yang sama, lalu jalankan
+jupyter notebook analisa_makan_bergizi_gratis.ipynb
+```
+
+## Struktur Proyek
+
+```
+.
+├── analisa_makan_bergizi_gratis.ipynb          # Notebook analisis
+├── indonesia_mbg_nationwide_enriched_2026.csv  # Dataset (tidak disertakan)
+└── README.md
+```
+
+## Teknologi
+
+Python · pandas · Matplotlib · Seaborn · scikit-learn (K-Means, StandardScaler) · Jupyter Notebook
+
+## Keterbatasan
+
+- Jumlah klaster (k = 3) ditetapkan langsung, belum divalidasi dengan *elbow method* atau *silhouette score*.
+- Baris dengan jumlah kolom tidak sesuai header diisi/dipotong saat pemuatan, sehingga perlu diverifikasi terhadap data mentah.
+- Hubungan antar variabel (mis. transit dan pembusukan) bersifat korelasional, belum menunjukkan sebab-akibat.
+- Rasio biaya per gram protein hanya memperhitungkan protein, bukan kecukupan gizi menyeluruh (energi, vitamin, mineral).
+
+## Pengembangan Lanjutan
+
+- Validasi jumlah klaster optimal (elbow, silhouette).
+- Uji statistik antar klaster wilayah (ANOVA / Kruskal-Wallis).
+- Dashboard interaktif (Tableau / Power BI).
+- Pipeline otomatis dari pemuatan data hingga visualisasi.
+
 **Contact**
 Feel free to contact me for any questions or collaboration opportunities:
 
